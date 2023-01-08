@@ -49,7 +49,6 @@ public abstract class RestAuthFilter extends AbstractAuthenticationProcessingFil
             log.error("Authentication Failed", ex);
             unsuccessfulAuthentication(request, response, ex);
         }
-
     }
 
     @Override

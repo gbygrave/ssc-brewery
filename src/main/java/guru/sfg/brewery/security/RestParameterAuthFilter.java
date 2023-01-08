@@ -12,12 +12,12 @@ public class RestParameterAuthFilter extends RestAuthFilter {
 
     @Override
     String getUserName(HttpServletRequest request) {
-        return request.getParameter("Api-Key");
+        return request.getParameter("apiKey");
     }
 
     @Override
     String getPassword(HttpServletRequest request) {
-        return request.getParameter("Api-Secret");
+        return request.getParameter("apiSecret");
     }
 
 }

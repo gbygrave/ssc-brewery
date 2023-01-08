@@ -46,8 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
         http.addFilterBefore(
                 restParameterAuthFilter(authenticationManager()),
-                UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable();
+                UsernamePasswordAuthenticationFilter.class);
+        // Don't need to re-disable csrf() protection as this setting is global.
 
         http.authorizeRequests(authorize -> {
             authorize
