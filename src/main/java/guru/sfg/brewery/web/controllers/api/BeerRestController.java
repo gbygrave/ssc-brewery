@@ -90,20 +90,22 @@ public class BeerRestController {
         return new ResponseEntity<>(beerService.findBeerByUpc(upc), HttpStatus.OK);
     }
 
-    @PostMapping(path = "beer")
+    @SuppressWarnings("rawtypes")
+	@PostMapping(path = "beer")
     public ResponseEntity saveNewBeer(@Valid @RequestBody BeerDto beerDto){
 
         BeerDto savedDto = beerService.saveBeer(beerDto);
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        //todo hostname for uri
+        //TODO: hostname for uri
         httpHeaders.add("Location", "/api/v1/beer_service/" + savedDto.getId().toString());
 
-        return new ResponseEntity(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
-    @PutMapping(path = {"beer/{beerId}"}, produces = { "application/json" })
+    @SuppressWarnings("rawtypes")
+	@PutMapping(path = {"beer/{beerId}"}, produces = { "application/json" })
     public ResponseEntity updateBeer(@PathVariable("beerId") UUID beerId, @Valid @RequestBody BeerDto beerDto){
 
         beerService.updateBeer(beerId, beerDto);
@@ -117,7 +119,8 @@ public class BeerRestController {
         beerService.deleteById(beerId);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @SuppressWarnings("rawtypes")
+	@ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<List> badReqeustHandler(ConstraintViolationException e){
         List<String> errors = new ArrayList<>(e.getConstraintViolations().size());
