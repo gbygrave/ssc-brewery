@@ -19,7 +19,6 @@ public class BeerRestControllerIT extends BaseIT {
                         .header("Api-Key", "spring")
                         .header("Api-Secret", "guruXXXX"))
                 .andExpect(status().isUnauthorized());
-
     }
 
     @Test
