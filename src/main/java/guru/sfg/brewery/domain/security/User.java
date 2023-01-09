@@ -1,6 +1,7 @@
 package guru.sfg.brewery.domain.security;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -50,5 +51,14 @@ public class User {
     private Boolean        credentialsNonExpired = true;
     @Builder.Default
     private Boolean        enabled = true;
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", password=" + password + ", accountNonExpired="
+                + accountNonExpired + ", accountNonLocked=" + accountNonLocked + ", credentialsNonExpired="
+                + credentialsNonExpired + ", enabled=" + enabled + 
+                ", authorities=" + authorities.stream().map(Authority::getRole).collect(Collectors.toList()) + 
+                "]";
+    }
 
+    
 }

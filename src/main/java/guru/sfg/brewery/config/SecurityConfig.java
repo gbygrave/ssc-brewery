@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -37,7 +36,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     PasswordEncoder passwordEncoder() {
         return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-
+    
+//    @Autowired
+//    JpaUserDetailsService jpaUserDetailsService;
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(
@@ -62,20 +64,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().sameOrigin();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("spring").password("{bcrypt}$2a$10$ukC.PwF/7QIV4FEdt1ihI.wkIwB4xBWBrBTQR.J0H8raiHKAEp7Ha")
-                .roles("ADMIN")
-                .and()
-                .withUser("user")
-                .password("{sha256}29e55dc39e0dc766306033bb9f77872de067ca670eb293fc53a5db346af78c5a1c4bbd3182b530a7")
-                .roles("USER")
-                .and()
-                .withUser("scott")
-                .password("{bcrypt}$2a$10$Sbub3hlrzlq84E0B4izpA.UjmxdOhlkaFvRImWA1CA1FMyUfNkJsq")
-                .roles("CUSTOMER");
-    }
+    // REPLACED BY JpaUserDetailsService.java
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(this.jpaUserDetailsService).passwordEncoder(passwordEncoder());
+//          OR
+//        auth.inMemoryAuthentication()
+//                .withUser("spring").password("{bcrypt}$2a$10$ukC.PwF/7QIV4FEdt1ihI.wkIwB4xBWBrBTQR.J0H8raiHKAEp7Ha")
+//                .roles("ADMIN")
+//                .and()
+//                .withUser("user")
+//                .password("{sha256}29e55dc39e0dc766306033bb9f77872de067ca670eb293fc53a5db346af78c5a1c4bbd3182b530a7")
+//                .roles("USER")
+//                .and()
+//                .withUser("scott")
+//                .password("{bcrypt}$2a$10$Sbub3hlrzlq84E0B4izpA.UjmxdOhlkaFvRImWA1CA1FMyUfNkJsq")
+//                .roles("CUSTOMER");
+//    }
 
 //	@Override
 //	@Bean
