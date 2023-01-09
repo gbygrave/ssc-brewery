@@ -12,23 +12,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import guru.sfg.brewery.security.RestAuthFilter;
+import guru.sfg.brewery.security.AbstractRestAuthFilter;
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
-import guru.sfg.brewery.security.RestParameterAuthFilter;
+import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private RestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
-        RestAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+    private AbstractRestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+        AbstractRestAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
         filter.setAuthenticationManager(authenticationManager);
         return filter;
     }
 
-    private RestAuthFilter restParameterAuthFilter(AuthenticationManager authenticationManager) {
-        RestAuthFilter filter = new RestParameterAuthFilter(new AntPathRequestMatcher("/api/**"));
+    private AbstractRestAuthFilter restParameterAuthFilter(AuthenticationManager authenticationManager) {
+        AbstractRestAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
         filter.setAuthenticationManager(authenticationManager);
         return filter;
     }
@@ -51,11 +51,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests(authorize -> {
             authorize
+                    .antMatchers("/h2-console/**").permitAll() // NOT FOR PROD
                     .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
                     .antMatchers("/beers/find", "/beers*").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
                     .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
         }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+
+        // h2 console config
+        http.headers().frameOptions().sameOrigin();
     }
 
     @Override

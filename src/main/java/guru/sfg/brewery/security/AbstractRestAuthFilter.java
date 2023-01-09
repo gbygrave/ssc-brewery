@@ -21,9 +21,9 @@ import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class RestAuthFilter extends AbstractAuthenticationProcessingFilter {
+public abstract class AbstractRestAuthFilter extends AbstractAuthenticationProcessingFilter {
 
-    public RestAuthFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
+    public AbstractRestAuthFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
         super(requiresAuthenticationRequestMatcher);
     }
 
