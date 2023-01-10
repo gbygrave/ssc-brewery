@@ -85,7 +85,7 @@ public class BeerRestControllerIT extends BaseIT {
         }
 
         @ParameterizedTest(name = "#{index} with [{arguments}]")
-        @MethodSource("guru.sfg.brewery.web.controllers.BeerControllerIT#getStreamCustomerAndAdmin")
+        @MethodSource("guru.sfg.brewery.web.controllers.BaseIT#getStreamNotAdmin")
         void deleteBeerHttpBasicNotAuth(String user, String pwd) throws Exception {
             mockMvc.perform(
                     delete("/api/v1/beer/" + beerToDelete().getId()).with(httpBasic(user, pwd)))
