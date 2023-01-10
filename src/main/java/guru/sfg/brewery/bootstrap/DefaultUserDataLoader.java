@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultUserDataLoader implements CommandLineRunner {
 
-    private static final String CUSTOMER_ROLE = "CUSTOMER";
-    private static final String USER_ROLE     = "USER";
-    private static final String ADMIN_ROLE    = "ADMIN";
+    private static final String CUSTOMER_ROLE = "ROLE_CUSTOMER";
+    private static final String USER_ROLE     = "ROLE_USER";
+    private static final String ADMIN_ROLE    = "ROLE_ADMIN";
 
     private final UserRepository      userRepository;
     private final AuthorityRepository authorityRepository;

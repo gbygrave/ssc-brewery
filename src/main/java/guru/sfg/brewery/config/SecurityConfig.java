@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +19,7 @@ import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AbstractRestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
@@ -36,10 +38,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     PasswordEncoder passwordEncoder() {
         return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-    
+
 //    @Autowired
 //    JpaUserDetailsService jpaUserDetailsService;
-    
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(
@@ -55,9 +57,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             authorize
                     .antMatchers("/h2-console/**").permitAll() // NOT FOR PROD
                     .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
-                    .antMatchers("/beers/find", "/beers*").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                    .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
+                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").hasAnyRole("ADMIN", "USER", "CUSTOMER")
+                    .mvcMatchers(HttpMethod.DELETE, "/api/v1/beer/**").hasRole("ADMIN")
+                    .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").hasAnyRole("ADMIN", "USER", "CUSTOMER")
+                    .mvcMatchers("/beers/find", "/beers/{beerId}").hasAnyRole("ADMIN", "USER", "CUSTOMER");
+            authorize
+                    .mvcMatchers("/brewery/breweries").hasAnyRole("CUSTOMER", "ADMIN")
+                    .mvcMatchers(HttpMethod.GET, "/brewery/api/v1/breweries").hasAnyRole("CUSTOMER", "ADMIN");
+
         }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
 
         // h2 console config

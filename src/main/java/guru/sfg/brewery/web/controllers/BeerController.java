@@ -17,7 +17,6 @@
 
 package guru.sfg.brewery.web.controllers;
 
-
 import guru.sfg.brewery.domain.Beer;
 import guru.sfg.brewery.repositories.BeerInventoryRepository;
 import guru.sfg.brewery.repositories.BeerRepository;
@@ -38,15 +37,13 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
-
 @RequiredArgsConstructor
 @RequestMapping("/beers")
 @Controller
 public class BeerController {
 
-    private final BeerRepository beerRepository;
+    private final BeerRepository          beerRepository;
     private final BeerInventoryRepository beerInventoryRepository;
-
 
     @RequestMapping("/find")
     public String findBeers(Model model) {
@@ -57,10 +54,11 @@ public class BeerController {
     @GetMapping
     public String processFindFormReturnMany(Beer beer, BindingResult result, Model model) {
         // find beers by name
-        //ToDO: Add Service
-        //ToDO: Get paging data from view
-        Page<Beer> pagedResult = beerRepository.findAllByBeerNameIsLike("%" + beer.getBeerName() + "%", createPageRequest(0, 10, Sort.Direction.DESC, "beerName"));
-        List<Beer> beerList = pagedResult.getContent();
+        // ToDO: Add Service
+        // ToDO: Get paging data from view
+        Page<Beer> pagedResult = beerRepository.findAllByBeerNameIsLike("%" + beer.getBeerName() + "%",
+                createPageRequest(0, 10, Sort.Direction.DESC, "beerName"));
+        List<Beer> beerList    = pagedResult.getContent();
         if (beerList.isEmpty()) {
             // no beers found
             result.rejectValue("beerName", "notFound", "not found");
@@ -76,11 +74,10 @@ public class BeerController {
         }
     }
 
-
     @GetMapping("/{beerId}")
     public ModelAndView showBeer(@PathVariable UUID beerId) {
         ModelAndView mav = new ModelAndView("beers/beerDetails");
-        //ToDO: Add Service
+        // ToDO: Add Service
         mav.addObject(beerRepository.findById(beerId).get());
         return mav;
     }
@@ -93,7 +90,7 @@ public class BeerController {
 
     @PostMapping("/new")
     public String processCreationForm(Beer beer) {
-        //ToDO: Add Service
+        // ToDO: Add Service
         Beer newBeer = Beer.builder()
                 .beerName(beer.getBeerName())
                 .beerStyle(beer.getBeerStyle())
@@ -119,7 +116,7 @@ public class BeerController {
         if (result.hasErrors()) {
             return "beers/createOrUpdateBeer";
         } else {
-            //ToDO: Add Service
+            // ToDO: Add Service
             Beer savedBeer = beerRepository.save(beer);
             return "redirect:/beers/" + savedBeer.getId();
         }
@@ -131,5 +128,3 @@ public class BeerController {
                 Sort.by(sortDirection, propertyName));
     }
 }
-
-
