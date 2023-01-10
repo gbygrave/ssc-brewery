@@ -16,7 +16,10 @@
  */
 package guru.sfg.brewery.bootstrap;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import javax.transaction.Transactional;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,20 +39,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultUserDataLoader implements CommandLineRunner {
 
-    private static final String PERMISSION_BEER_CREATE = "beer.create";
-    private static final String PERMISSION_BEER_READ   = "beer.read";
-    private static final String PERMISSION_BEER_UPDATE = "beer.update";
-    private static final String PERMISSION_BEER_DELETE = "beer.delete";
+    public static final String PERMISSION_BEER_CREATE     = "beer.create";
+    public static final String PERMISSION_BEER_READ       = "beer.read";
+    public static final String PERMISSION_BEER_UPDATE     = "beer.update";
+    public static final String PERMISSION_BEER_DELETE     = "beer.delete";
+    public static final String PERMISSION_CUSTOMER_CREATE = "customer.create";
+    public static final String PERMISSION_CUSTOMER_READ   = "customer.read";
+    public static final String PERMISSION_CUSTOMER_UPDATE = "customer.update";
+    public static final String PERMISSION_CUSTOMER_DELETE = "customer.delete";
+    public static final String PERMISSION_BREWERY_CREATE  = "brewery.create";
+    public static final String PERMISSION_BREWERY_READ    = "brewery.read";
+    public static final String PERMISSION_BREWERY_UPDATE  = "brewery.update";
+    public static final String PERMISSION_BREWERY_DELETE  = "brewery.delete";
 
-    private static final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
-    private static final String ROLE_USER     = "ROLE_USER";
-    private static final String ROLE_ADMIN    = "ROLE_ADMIN";
+    public static final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
+    public static final String ROLE_USER     = "ROLE_USER";
+    public static final String ROLE_ADMIN    = "ROLE_ADMIN";
 
     private final AuthorityRepository authorityRepository;
     private final RoleRepository      roleRepository;
     private final UserRepository      userRepository;
     private final PasswordEncoder     passwordEncoder;
 
+    @Transactional
     @Override
     public void run(String... args) {
         loadAuthorityData();
@@ -63,6 +75,17 @@ public class DefaultUserDataLoader implements CommandLineRunner {
             authorityRepository.save(Authority.builder().permission(PERMISSION_BEER_READ).build());
             authorityRepository.save(Authority.builder().permission(PERMISSION_BEER_UPDATE).build());
             authorityRepository.save(Authority.builder().permission(PERMISSION_BEER_DELETE).build());
+
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_CREATE).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_READ).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_UPDATE).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_DELETE).build());
+
+            authorityRepository.save(Authority.builder().permission(PERMISSION_BREWERY_CREATE).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_BREWERY_READ).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_BREWERY_UPDATE).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_BREWERY_DELETE).build());
+
             log.debug("Authorities Created: " + authorityRepository.count());
         }
     }
@@ -73,31 +96,44 @@ public class DefaultUserDataLoader implements CommandLineRunner {
             Authority readBeer   = authorityRepository.findByPermission(PERMISSION_BEER_READ).orElseThrow();
             Authority updateBeer = authorityRepository.findByPermission(PERMISSION_BEER_UPDATE).orElseThrow();
             Authority deleteBeer = authorityRepository.findByPermission(PERMISSION_BEER_DELETE).orElseThrow();
+            Authority createCustomer = authorityRepository.findByPermission(PERMISSION_CUSTOMER_CREATE).orElseThrow();
+            Authority readCustomer   = authorityRepository.findByPermission(PERMISSION_CUSTOMER_READ).orElseThrow();
+            Authority updateCustomer = authorityRepository.findByPermission(PERMISSION_CUSTOMER_UPDATE).orElseThrow();
+            Authority deleteCustomer = authorityRepository.findByPermission(PERMISSION_CUSTOMER_DELETE).orElseThrow();
+            Authority createBrewery = authorityRepository.findByPermission(PERMISSION_BREWERY_CREATE).orElseThrow();
+            Authority readBrewery   = authorityRepository.findByPermission(PERMISSION_BREWERY_READ).orElseThrow();
+            Authority updateBrewery = authorityRepository.findByPermission(PERMISSION_BREWERY_UPDATE).orElseThrow();
+            Authority deleteBrewery = authorityRepository.findByPermission(PERMISSION_BREWERY_DELETE).orElseThrow();
 
             roleRepository.save(Role.builder()
                     .name(ROLE_ADMIN)
-                    .authorities(Set.of(createBeer, readBeer, updateBeer, deleteBeer))
+                    .authorities(new HashSet<>(Set.of(
+                            createBeer, readBeer, updateBeer, deleteBeer,
+                            createCustomer, readCustomer, updateCustomer, deleteCustomer,
+                            createBrewery, readBrewery, updateBrewery, deleteBrewery)))
                     .build());
 
             roleRepository.save(Role.builder()
                     .name(ROLE_CUSTOMER)
-                    .authorities(Set.of(readBeer))
+                    .authorities(new HashSet<>(Set.of(readBeer, readCustomer, readBrewery)))
                     .build());
 
             roleRepository.save(Role.builder()
                     .name(ROLE_USER)
-                    .authorities(Set.of(readBeer))
+                    .authorities(new HashSet<>(Set.of(readBeer)))
                     .build());
+            
+            
             log.debug("Roles Created: " + authorityRepository.count());
         }
     }
 
     private void loadUserData() {
         if (userRepository.count() == 0) {
-            Role admin = roleRepository.findByName(ROLE_ADMIN).orElseThrow();
+            Role admin    = roleRepository.findByName(ROLE_ADMIN).orElseThrow();
             Role customer = roleRepository.findByName(ROLE_CUSTOMER).orElseThrow();
-            Role user = roleRepository.findByName(ROLE_USER).orElseThrow();
-            
+            Role user     = roleRepository.findByName(ROLE_USER).orElseThrow();
+
             userRepository.save(User.builder()
                     .username("spring")
                     .password(passwordEncoder.encode("guru"))
@@ -109,7 +145,7 @@ public class DefaultUserDataLoader implements CommandLineRunner {
                     .password(passwordEncoder.encode("tiger"))
                     .role(customer)
                     .build());
-            
+
             userRepository.save(User.builder()
                     .username("user")
                     .password(passwordEncoder.encode("password"))
