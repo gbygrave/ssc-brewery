@@ -9,6 +9,7 @@ import guru.sfg.brewery.repositories.BeerRepository;
 import guru.sfg.brewery.repositories.CustomerRepository;
 import guru.sfg.brewery.services.BeerService;
 import guru.sfg.brewery.services.BreweryService;
+import guru.sfg.brewery.web.controllers.api.BeerOrderRestController;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +31,9 @@ public class IndexControllerIT extends BaseIT {
 
     @MockBean
     BeerService beerService;
+    
+    @MockBean
+    BeerOrderRestController beerOrderRestController;
 
     @Test
     void testGetIndexSlash() throws Exception {
