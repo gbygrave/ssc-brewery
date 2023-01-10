@@ -37,7 +37,7 @@ public class Role {
     private Set<User> users;
     
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     // @formatter:off
     @JoinTable(name               = "role_authority", 
                joinColumns        = {@JoinColumn(name = "ROLE_ID",      referencedColumnName = "ID") }, 

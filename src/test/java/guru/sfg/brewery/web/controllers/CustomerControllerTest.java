@@ -49,9 +49,9 @@ class CustomerControllerTest {
 
     @InjectMocks
     CustomerController controller;
-    List<Customer> customerList;
-    UUID uuid;
-    Customer customer;
+    List<Customer>     customerList;
+    UUID               uuid;
+    Customer           customer;
 
     MockMvc mockMvc;
 
@@ -70,13 +70,14 @@ class CustomerControllerTest {
     }
 
     @Test
-    void findCustomers() throws Exception{
+    void findCustomers() throws Exception {
         mockMvc.perform(get("/customers/find"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customers/findCustomers"))
                 .andExpect(model().attributeExists("customer"));
         verifyZeroInteractions(customerRepository);
     }
+
 //ToDO: Fix stubbing error
     @Test
     @Disabled
@@ -99,7 +100,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void initCreationForm() throws Exception{
+    void initCreationForm() throws Exception {
         mockMvc.perform(get("/customers/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customers/createCustomer"))

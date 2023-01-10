@@ -12,8 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import guru.sfg.brewery.domain.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +34,9 @@ import lombok.Singular;
 @Getter
 @Setter
 @Builder
-public class User {
+public class User implements UserDetails, CredentialsContainer {
+
+    private static final long serialVersionUID = -2260149435746983421L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,8 +45,20 @@ public class User {
     private String username;
     private String password;
 
+    @Builder.Default
+    private Boolean accountNonExpired     = true;
+    @Builder.Default
+    private Boolean accountNonLocked      = true;
+    @Builder.Default
+    private Boolean credentialsNonExpired = true;
+    @Builder.Default
+    private Boolean enabled               = true;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Customer customer;
+
     @Singular
-    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     // @formatter:off
     @JoinTable(name               = "user_role", 
                joinColumns        = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID") }, 
@@ -46,23 +67,35 @@ public class User {
     private Set<Role> roles;
 
     @Transient
-    private Set<Authority> authorities;
-    
-    public Set<Authority> getAuthorities() {
+    public Set<GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(Role::getAuthorities) // stream of authority sets.
                 .flatMap(Set::stream) // Build stream from each set in outer strean and flatten into single stream.
+                .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
                 .collect(Collectors.toSet()); // Collect back into set.
     }
    
-    @Builder.Default
-    private Boolean        accountNonExpired = true;
-    @Builder.Default
-    private Boolean        accountNonLocked = true;
-    @Builder.Default
-    private Boolean        credentialsNonExpired = true;
-    @Builder.Default
-    private Boolean        enabled = true;
+    @Override
+    public void eraseCredentials() {
+        password = null;
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
     @Override
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", password=" + password + ", accountNonExpired="
@@ -71,6 +104,4 @@ public class User {
                 ", roles=" + roles.stream().map(Role::getName).collect(Collectors.toList()) + 
                 "]";
     }
-
-    
 }
