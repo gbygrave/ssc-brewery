@@ -39,18 +39,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultUserDataLoader implements CommandLineRunner {
 
-    public static final String PERMISSION_BEER_CREATE     = "beer.create";
-    public static final String PERMISSION_BEER_READ       = "beer.read";
-    public static final String PERMISSION_BEER_UPDATE     = "beer.update";
-    public static final String PERMISSION_BEER_DELETE     = "beer.delete";
-    public static final String PERMISSION_CUSTOMER_CREATE = "customer.create";
-    public static final String PERMISSION_CUSTOMER_READ   = "customer.read";
-    public static final String PERMISSION_CUSTOMER_UPDATE = "customer.update";
-    public static final String PERMISSION_CUSTOMER_DELETE = "customer.delete";
-    public static final String PERMISSION_BREWERY_CREATE  = "brewery.create";
-    public static final String PERMISSION_BREWERY_READ    = "brewery.read";
-    public static final String PERMISSION_BREWERY_UPDATE  = "brewery.update";
-    public static final String PERMISSION_BREWERY_DELETE  = "brewery.delete";
+    public static final String PERMISSION_BEER_CREATE           = "beer.create";
+    public static final String PERMISSION_BEER_READ             = "beer.read";
+    public static final String PERMISSION_BEER_UPDATE           = "beer.update";
+    public static final String PERMISSION_BEER_DELETE           = "beer.delete";
+    public static final String PERMISSION_CUSTOMER_CREATE       = "customer.create";
+    public static final String PERMISSION_CUSTOMER_READ         = "customer.read";
+    public static final String PERMISSION_CUSTOMER_UPDATE       = "customer.update";
+    public static final String PERMISSION_CUSTOMER_DELETE       = "customer.delete";
+    public static final String PERMISSION_BREWERY_CREATE        = "brewery.create";
+    public static final String PERMISSION_BREWERY_READ          = "brewery.read";
+    public static final String PERMISSION_BREWERY_UPDATE        = "brewery.update";
+    public static final String PERMISSION_BREWERY_DELETE        = "brewery.delete";
+    public static final String PERMISSION_ORDER_CREATE          = "order.create";
+    public static final String PERMISSION_ORDER_READ            = "order.read";
+    public static final String PERMISSION_ORDER_UPDATE          = "order.update";
+    public static final String PERMISSION_ORDER_DELETE          = "order.delete";
+    public static final String PERMISSION_CUSTOMER_ORDER_CREATE = "customer.order.create";
+    public static final String PERMISSION_CUSTOMER_ORDER_READ   = "customer.order.read";
+    public static final String PERMISSION_CUSTOMER_ORDER_UPDATE = "customer.order.update";
+    public static final String PERMISSION_CUSTOMER_ORDER_DELETE = "customer.order.delete";
 
     public static final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
     public static final String ROLE_USER     = "ROLE_USER";
@@ -86,44 +94,70 @@ public class DefaultUserDataLoader implements CommandLineRunner {
             authorityRepository.save(Authority.builder().permission(PERMISSION_BREWERY_UPDATE).build());
             authorityRepository.save(Authority.builder().permission(PERMISSION_BREWERY_DELETE).build());
 
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_ORDER_CREATE).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_ORDER_READ).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_ORDER_UPDATE).build());
+            authorityRepository.save(Authority.builder().permission(PERMISSION_CUSTOMER_ORDER_DELETE).build());
+
             log.debug("Authorities Created: " + authorityRepository.count());
         }
     }
 
     private void loadRoleData() {
         if (roleRepository.count() == 0) {
-            Authority createBeer = authorityRepository.findByPermission(PERMISSION_BEER_CREATE).orElseThrow();
-            Authority readBeer   = authorityRepository.findByPermission(PERMISSION_BEER_READ).orElseThrow();
-            Authority updateBeer = authorityRepository.findByPermission(PERMISSION_BEER_UPDATE).orElseThrow();
-            Authority deleteBeer = authorityRepository.findByPermission(PERMISSION_BEER_DELETE).orElseThrow();
-            Authority createCustomer = authorityRepository.findByPermission(PERMISSION_CUSTOMER_CREATE).orElseThrow();
-            Authority readCustomer   = authorityRepository.findByPermission(PERMISSION_CUSTOMER_READ).orElseThrow();
-            Authority updateCustomer = authorityRepository.findByPermission(PERMISSION_CUSTOMER_UPDATE).orElseThrow();
-            Authority deleteCustomer = authorityRepository.findByPermission(PERMISSION_CUSTOMER_DELETE).orElseThrow();
-            Authority createBrewery = authorityRepository.findByPermission(PERMISSION_BREWERY_CREATE).orElseThrow();
-            Authority readBrewery   = authorityRepository.findByPermission(PERMISSION_BREWERY_READ).orElseThrow();
-            Authority updateBrewery = authorityRepository.findByPermission(PERMISSION_BREWERY_UPDATE).orElseThrow();
-            Authority deleteBrewery = authorityRepository.findByPermission(PERMISSION_BREWERY_DELETE).orElseThrow();
+            Authority createBeer          = authorityRepository.findByPermission(PERMISSION_BEER_CREATE).orElseThrow();
+            Authority readBeer            = authorityRepository.findByPermission(PERMISSION_BEER_READ).orElseThrow();
+            Authority updateBeer          = authorityRepository.findByPermission(PERMISSION_BEER_UPDATE).orElseThrow();
+            Authority deleteBeer          = authorityRepository.findByPermission(PERMISSION_BEER_DELETE).orElseThrow();
+            Authority createCustomer      = authorityRepository.findByPermission(PERMISSION_CUSTOMER_CREATE)
+                    .orElseThrow();
+            Authority readCustomer        = authorityRepository.findByPermission(PERMISSION_CUSTOMER_READ)
+                    .orElseThrow();
+            Authority updateCustomer      = authorityRepository.findByPermission(PERMISSION_CUSTOMER_UPDATE)
+                    .orElseThrow();
+            Authority deleteCustomer      = authorityRepository.findByPermission(PERMISSION_CUSTOMER_DELETE)
+                    .orElseThrow();
+            Authority createBrewery       = authorityRepository.findByPermission(PERMISSION_BREWERY_CREATE)
+                    .orElseThrow();
+            Authority readBrewery         = authorityRepository.findByPermission(PERMISSION_BREWERY_READ).orElseThrow();
+            Authority updateBrewery       = authorityRepository.findByPermission(PERMISSION_BREWERY_UPDATE)
+                    .orElseThrow();
+            Authority deleteBrewery       = authorityRepository.findByPermission(PERMISSION_BREWERY_DELETE)
+                    .orElseThrow();
+            Authority createOrder         = authorityRepository.findByPermission(PERMISSION_ORDER_CREATE).orElseThrow();
+            Authority readOrder           = authorityRepository.findByPermission(PERMISSION_ORDER_READ).orElseThrow();
+            Authority updateOrder         = authorityRepository.findByPermission(PERMISSION_ORDER_UPDATE).orElseThrow();
+            Authority deleteOrder         = authorityRepository.findByPermission(PERMISSION_ORDER_DELETE).orElseThrow();
+            Authority createCustomerOrder = authorityRepository.findByPermission(PERMISSION_CUSTOMER_ORDER_CREATE)
+                    .orElseThrow();
+            Authority readCustomerOrder   = authorityRepository.findByPermission(PERMISSION_CUSTOMER_ORDER_READ)
+                    .orElseThrow();
+            Authority updateCustomerOrder = authorityRepository.findByPermission(PERMISSION_CUSTOMER_ORDER_UPDATE)
+                    .orElseThrow();
+            Authority deleteCustomerOrder = authorityRepository.findByPermission(PERMISSION_CUSTOMER_ORDER_DELETE)
+                    .orElseThrow();
 
             roleRepository.save(Role.builder()
                     .name(ROLE_ADMIN)
                     .authorities(new HashSet<>(Set.of(
                             createBeer, readBeer, updateBeer, deleteBeer,
                             createCustomer, readCustomer, updateCustomer, deleteCustomer,
-                            createBrewery, readBrewery, updateBrewery, deleteBrewery)))
+                            createBrewery, readBrewery, updateBrewery, deleteBrewery,
+                            createOrder, readOrder, updateOrder, deleteOrder)))
                     .build());
 
             roleRepository.save(Role.builder()
                     .name(ROLE_CUSTOMER)
-                    .authorities(new HashSet<>(Set.of(readBeer, readCustomer, readBrewery)))
+                    .authorities(new HashSet<>(Set.of(
+                            readBeer, readCustomer, readBrewery,
+                            createCustomerOrder, readCustomerOrder, updateCustomerOrder, deleteCustomerOrder)))
                     .build());
 
             roleRepository.save(Role.builder()
                     .name(ROLE_USER)
                     .authorities(new HashSet<>(Set.of(readBeer)))
                     .build());
-            
-            
+
             log.debug("Roles Created: " + authorityRepository.count());
         }
     }
