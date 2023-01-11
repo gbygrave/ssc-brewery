@@ -1,4 +1,4 @@
-package guru.sfg.brewery.web.controllers;
+package guru.sfg.brewery.web.controllers.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,11 +28,12 @@ import guru.sfg.brewery.domain.Customer;
 import guru.sfg.brewery.repositories.BeerOrderRepository;
 import guru.sfg.brewery.repositories.BeerRepository;
 import guru.sfg.brewery.repositories.CustomerRepository;
+import guru.sfg.brewery.web.controllers.BaseIT;
 import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderLineDto;
 
 @SpringBootTest
-public class BeerOrderControllerTest extends BaseIT {
+public class BeerOrderRestControllerIT extends BaseIT {
 
     public static final String API_ROOT = "/api/v1/customers/";
 
@@ -54,7 +55,7 @@ public class BeerOrderControllerTest extends BaseIT {
     List<Beer> loadedBeers;
 
     @BeforeEach
-    void setUp() {
+    protected void setUp() {
         super.setUp();
         stPeteCustomer = customerRepository.findAllByCustomerName(DefaultBreweryLoader.ST_PETE_DISTRIBUTING).orElseThrow();
         dunedinCustomer = customerRepository.findAllByCustomerName(DefaultBreweryLoader.ST_PETE_DISTRIBUTING).orElseThrow();
