@@ -36,4 +36,6 @@ public interface BeerOrderService {
     void pickupOrder(UUID customerId, UUID orderId);
 
     BeerOrderPagedList listOrders(PageRequest of);
+
+    BeerOrderDto getOrderById(UUID orderId);
 }

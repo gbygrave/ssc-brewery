@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -34,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
+    SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
     }
 
 //    @Autowired
@@ -43,13 +44,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterBefore(
-                restHeaderAuthFilter(authenticationManager()),
-                UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable();
-        http.addFilterBefore(
-                restParameterAuthFilter(authenticationManager()),
-                UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(
+//                restHeaderAuthFilter(authenticationManager()),
+//                UsernamePasswordAuthenticationFilter.class)
+//                .csrf().disable();
+//        http.addFilterBefore(
+//                restParameterAuthFilter(authenticationManager()),
+//                UsernamePasswordAuthenticationFilter.class);
         // Don't need to re-disable csrf() protection as this setting is global.
 
         http.authorizeRequests(authorize -> {
@@ -57,10 +58,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/h2-console/**").permitAll() // NOT FOR PROD
                     .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
 
-        }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+        })
+                .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .httpBasic()
+                .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
 
         // h2 console config
         http.headers().frameOptions().sameOrigin();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     // REPLACED BY JpaUserDetailsService.java

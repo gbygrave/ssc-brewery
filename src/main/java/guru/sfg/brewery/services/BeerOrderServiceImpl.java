@@ -95,6 +95,16 @@ public class BeerOrderServiceImpl implements BeerOrderService {
     }
 
     @Override
+    public BeerOrderDto getOrderById(UUID orderId) {
+        // Convoluted.  Why wouldn't we retrieve the order, then manually check the customer invoking this method against 
+        // the customer recorded in the order?  How would we get access to the authenticated principal though?
+        // Resulting code would probably be larger.
+        
+        BeerOrder beerOrder = beerOrderRepository.findOrderByIdSecure(orderId);
+        return beerOrderMapper.beerOrderToDto(beerOrder);
+    }
+
+    @Override
     public void pickupOrder(UUID customerId, UUID orderId) {
         BeerOrder beerOrder = getOrder(customerId, orderId);
         beerOrder.setOrderStatus(OrderStatusEnum.PICKED_UP);
