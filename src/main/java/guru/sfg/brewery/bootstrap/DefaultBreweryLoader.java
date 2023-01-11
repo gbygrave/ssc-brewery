@@ -16,28 +16,35 @@
  */
 package guru.sfg.brewery.bootstrap;
 
-import guru.sfg.brewery.domain.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import guru.sfg.brewery.domain.Beer;
+import guru.sfg.brewery.domain.BeerInventory;
+import guru.sfg.brewery.domain.BeerOrder;
+import guru.sfg.brewery.domain.BeerOrderLine;
+import guru.sfg.brewery.domain.Brewery;
+import guru.sfg.brewery.domain.Customer;
+import guru.sfg.brewery.domain.OrderStatusEnum;
 import guru.sfg.brewery.domain.security.Authority;
 import guru.sfg.brewery.domain.security.Role;
 import guru.sfg.brewery.domain.security.User;
-import guru.sfg.brewery.repositories.*;
+import guru.sfg.brewery.repositories.BeerInventoryRepository;
+import guru.sfg.brewery.repositories.BeerOrderRepository;
+import guru.sfg.brewery.repositories.BeerRepository;
+import guru.sfg.brewery.repositories.BreweryRepository;
+import guru.sfg.brewery.repositories.CustomerRepository;
 import guru.sfg.brewery.repositories.security.AuthorityRepository;
 import guru.sfg.brewery.repositories.security.RoleRepository;
 import guru.sfg.brewery.repositories.security.UserRepository;
 import guru.sfg.brewery.web.model.BeerStyleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.transaction.Transactional;
 
 /**
  * Created by jt on 2019-01-26.
@@ -76,6 +83,9 @@ public class DefaultBreweryLoader implements CommandLineRunner {
     public static final String ST_PETE_DISTRIBUTING  = "St Pete Distributing";
     public static final String DUNEDIN_DISTRIBUTING  = "Dunedin Distributing";
     public static final String KEY_WEST_DISTRIBUTORS = "Key West Distributors";
+    public static final String KEYWEST_USER          = "keywest";
+    public static final String DUNEDIN_USER          = "dunedin";
+    public static final String STPETE_USER           = "stpete";
 
     public static final String BEER_1_UPC = "0631234200036";
     public static final String BEER_2_UPC = "0631234300019";
@@ -122,17 +132,17 @@ public class DefaultBreweryLoader implements CommandLineRunner {
                 .build());
 
         // create users
-        User stPeteUser = userRepository.save(User.builder().username("stpete")
+        User stPeteUser = userRepository.save(User.builder().username(STPETE_USER)
                 .password(passwordEncoder.encode("password"))
                 .customer(stPeteCustomer)
                 .role(customerRole).build());
 
-        User dunedinUser = userRepository.save(User.builder().username("dunedin")
+        User dunedinUser = userRepository.save(User.builder().username(DUNEDIN_USER)
                 .password(passwordEncoder.encode("password"))
                 .customer(dunedinCustomer)
                 .role(customerRole).build());
 
-        User keyWestUser = userRepository.save(User.builder().username("keywest")
+        User keyWestUser = userRepository.save(User.builder().username(KEYWEST_USER)
                 .password(passwordEncoder.encode("password"))
                 .customer(keyWestCustomer)
                 .role(customerRole).build());
@@ -141,7 +151,7 @@ public class DefaultBreweryLoader implements CommandLineRunner {
         createOrder(stPeteCustomer);
         createOrder(dunedinCustomer);
         createOrder(keyWestCustomer);
-        
+
         log.debug("Orders Created: " + beerOrderRepository.count());
     }
 
