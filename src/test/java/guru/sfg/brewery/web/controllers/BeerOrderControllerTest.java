@@ -185,7 +185,7 @@ public class BeerOrderControllerTest extends BaseIT {
     @Transactional
     void pickUpOrderNotAuth() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
-        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/order/" + beerOrder.getId() + "/pickup"))
+        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId() + "/pickup"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -194,7 +194,7 @@ public class BeerOrderControllerTest extends BaseIT {
     @Transactional
     void pickUpOrderAdminUser() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
-        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/order/" + beerOrder.getId() + "/pickup"))
+        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId() + "/pickup"))
                 .andExpect(status().is2xxSuccessful());
     }
 
@@ -203,7 +203,7 @@ public class BeerOrderControllerTest extends BaseIT {
     @Transactional
     void pickUpOrderCustomerUserAUTH() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
-        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/order/" + beerOrder.getId() + "/pickup"))
+        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId() + "/pickup"))
                 .andExpect(status().is2xxSuccessful());
     }
 
@@ -212,7 +212,7 @@ public class BeerOrderControllerTest extends BaseIT {
     @Transactional
     void pickUpOrderCustomerUserNOT_AUTH() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
-        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/order/" + beerOrder.getId() + "/pickup"))
+        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId() + "/pickup"))
                 .andExpect(status().isForbidden());
     }
 
