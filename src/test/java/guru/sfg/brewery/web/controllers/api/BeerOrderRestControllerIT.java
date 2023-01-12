@@ -120,21 +120,21 @@ public class BeerOrderRestControllerIT extends BaseIT {
                 .andExpect(status().isUnauthorized());
     }
 
-    @WithUserDetails(value = "spring")
+    @WithUserDetails("spring")
     @Test
     void listOrdersAdminAuth() throws Exception {
         mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
                 .andExpect(status().isOk());
     }
 
-    @WithUserDetails(value = DefaultBreweryLoader.STPETE_USER)
+    @WithUserDetails(DefaultBreweryLoader.STPETE_USER)
     @Test
     void listOrdersCustomerAuth() throws Exception {
         mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
                 .andExpect(status().isOk());
     }
 
-    @WithUserDetails(value = DefaultBreweryLoader.DUNEDIN_USER)
+    @WithUserDetails(DefaultBreweryLoader.DUNEDIN_USER)
     @Test
     void listOrdersCustomerNOTAuth() throws Exception {
         mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))

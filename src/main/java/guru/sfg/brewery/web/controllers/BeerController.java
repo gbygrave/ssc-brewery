@@ -17,13 +17,11 @@
 
 package guru.sfg.brewery.web.controllers;
 
-import guru.sfg.brewery.domain.Beer;
-import guru.sfg.brewery.repositories.BeerInventoryRepository;
-import guru.sfg.brewery.repositories.BeerRepository;
-import guru.sfg.brewery.security.perms.BeerCreatePermission;
-import guru.sfg.brewery.security.perms.BeerReadPermission;
-import guru.sfg.brewery.security.perms.BeerUpdatePermission;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.UUID;
+
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,9 +34,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.UUID;
+import guru.sfg.brewery.domain.Beer;
+import guru.sfg.brewery.repositories.BeerInventoryRepository;
+import guru.sfg.brewery.repositories.BeerRepository;
+import guru.sfg.brewery.security.perms.BeerCreatePermission;
+import guru.sfg.brewery.security.perms.BeerReadPermission;
+import guru.sfg.brewery.security.perms.BeerUpdatePermission;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/beers")
@@ -48,7 +50,7 @@ public class BeerController {
     private final BeerRepository          beerRepository;
     private final BeerInventoryRepository beerInventoryRepository;
 
-    @RequestMapping("/find")
+    @GetMapping("/find")
     @BeerReadPermission
     public String findBeers(Model model) {
         model.addAttribute("beer", Beer.builder().build());
@@ -99,6 +101,8 @@ public class BeerController {
     @BeerCreatePermission
     public String processCreationForm(Beer beer) {
         // ToDO: Add Service
+        // Q. Why create a new object based on the fields of the supplied object?
+        // Save the supplied object works.  Do we not trust the object provided by the framework?
         Beer newBeer = Beer.builder()
                 .beerName(beer.getBeerName())
                 .beerStyle(beer.getBeerStyle())
