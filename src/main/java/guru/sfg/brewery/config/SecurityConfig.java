@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -15,12 +16,16 @@ import guru.sfg.brewery.security.AbstractRestAuthFilter;
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
 import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final UserDetailsService userDetailsService;
+    
     @SuppressWarnings("unused")
     private AbstractRestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
         AbstractRestAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
@@ -77,7 +82,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             .permitAll();
                 })
                 .httpBasic()
-                .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
+                .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**")
+                .and().rememberMe().key("sfg-key").userDetailsService(userDetailsService);
 
         // h2 console config
         http.headers().frameOptions().sameOrigin();
