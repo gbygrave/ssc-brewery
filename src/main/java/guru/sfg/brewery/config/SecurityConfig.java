@@ -7,11 +7,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import guru.sfg.brewery.security.AbstractRestAuthFilter;
@@ -24,12 +21,14 @@ import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @SuppressWarnings("unused")
     private AbstractRestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
         AbstractRestAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
         filter.setAuthenticationManager(authenticationManager);
         return filter;
     }
 
+    @SuppressWarnings("unused")
     private AbstractRestAuthFilter restParameterAuthFilter(AuthenticationManager authenticationManager) {
         AbstractRestAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
         filter.setAuthenticationManager(authenticationManager);
@@ -53,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.addFilterBefore(
 //                restParameterAuthFilter(authenticationManager()),
 //                UsernamePasswordAuthenticationFilter.class);
-        // Don't need to re-disable csrf() protection as this setting is global.
+//        // Don't need to re-disable csrf() protection as this setting is global.
 
         http.authorizeRequests(authorize -> {
             authorize
@@ -69,11 +68,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     loginConfigurer.loginProcessingUrl("/login")
                             .loginPage("/").permitAll()
                             .successForwardUrl("/")
-                            .defaultSuccessUrl("/");
+                            .defaultSuccessUrl("/")
+                            .failureUrl("/?error");
                 })
                 .logout(logoutConfigurer -> {
                     logoutConfigurer.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                            .logoutSuccessUrl("/")
+                            .logoutSuccessUrl("/?logout")
                             .permitAll();
                 })
                 .httpBasic()
