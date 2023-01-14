@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import guru.sfg.brewery.security.AbstractRestAuthFilter;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
+    private final PersistentTokenRepository persistentTokenRepository;
     
     @SuppressWarnings("unused")
     private AbstractRestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
@@ -83,7 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**")
-                .and().rememberMe().key("sfg-key").userDetailsService(userDetailsService);
+                // .and().rememberMe().key("sfg-key").userDetailsService(userDetailsService);
+                .and().rememberMe().tokenRepository(persistentTokenRepository).userDetailsService(userDetailsService);
 
         // h2 console config
         http.headers().frameOptions().sameOrigin();
