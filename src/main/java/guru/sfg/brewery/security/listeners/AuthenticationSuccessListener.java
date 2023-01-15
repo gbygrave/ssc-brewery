@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import guru.sfg.brewery.domain.security.LoginSuccess;
 import guru.sfg.brewery.domain.security.User;
 import guru.sfg.brewery.repositories.security.LoginSuccessRepository;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +43,6 @@ public class AuthenticationSuccessListener {
                 log.debug("Source IP: " + details.getRemoteAddress());
             }
             LoginSuccess loginSuccess = loginSuccessRepository.save(builder.build());
-
             log.debug("Login Success saved. Id: " + loginSuccess.getId());
         }
     }
