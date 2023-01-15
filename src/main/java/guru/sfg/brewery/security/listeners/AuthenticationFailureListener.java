@@ -1,6 +1,8 @@
 package guru.sfg.brewery.security.listeners;
 
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,6 +50,20 @@ public class AuthenticationFailureListener {
 
             LoginFailure loginFailure = loginFailureRepository.save(builder.build());
             log.debug("Login Failure saved. Id: " + loginFailure.getId());
+            
+            if (loginFailure.getUser() != null) {
+                optionallyLockUserAccount(loginFailure.getUser());
+            }
+        }
+    }
+
+    private void optionallyLockUserAccount(User user) {
+        List<LoginFailure> failuresList = loginFailureRepository.findAllByUserAndCreatedDateIsAfter(
+                user, Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
+        if (failuresList.size() > 3) {
+            log.debug("Locking User Account... ");
+            user.setAccountNonLocked(false);
+            userRepository.save(user);
         }
     }
 }
