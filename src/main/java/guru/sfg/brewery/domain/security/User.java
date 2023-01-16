@@ -1,9 +1,11 @@
 package guru.sfg.brewery.domain.security;
 
+import java.sql.Timestamp;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,6 +57,18 @@ public class User implements UserDetails, CredentialsContainer {
     private Boolean credentialsNonExpired = true;
     @Builder.Default
     private Boolean enabled               = true;
+    @Builder.Default
+    private Boolean userGoogle2Fa         = false;
+    private String  google2FaSecret;
+    @Transient
+    private Boolean google2FaRequired     = true;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Timestamp createdDate;
+
+    @UpdateTimestamp
+    private Timestamp lastModifiedDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
@@ -95,7 +111,7 @@ public class User implements UserDetails, CredentialsContainer {
     public boolean isEnabled() {
         return this.enabled;
     }
-
+    
     @Override
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", password=" + password + ", accountNonExpired="
