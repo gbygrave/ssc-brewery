@@ -65,8 +65,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        // Don't need to re-disable csrf() protection as this setting is global.
 
         http.addFilterBefore(google2FaFilter, SessionManagementFilter.class);
-        
-        http.authorizeRequests(authorize -> {
+        http.cors()
+        .and()
+        .authorizeRequests(authorize -> {
             authorize
                     .antMatchers("/h2-console/**").permitAll() // NOT FOR PROD
                     .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
@@ -95,11 +96,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // h2 console config
         http.headers().frameOptions().sameOrigin();
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     // REPLACED BY JpaUserDetailsService.java

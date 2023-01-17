@@ -48,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 public class BeerController {
 
     private final BeerRepository          beerRepository;
+    @SuppressWarnings("unused")
     private final BeerInventoryRepository beerInventoryRepository;
 
     @GetMapping("/find")
