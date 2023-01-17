@@ -1,5 +1,6 @@
 package guru.sfg.brewery.web.controllers;
 
+import org.jboss.jandex.Main;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +28,6 @@ public class UserController {
 
     @GetMapping("/register2fa")
     public String register2fa(Model model) {
-
         User user = getUser();
 
         String url = GoogleAuthenticatorQRGenerator.getOtpAuthURL(
@@ -42,16 +42,17 @@ public class UserController {
     }
 
     @PostMapping("/register2fa")
-    public String confirm2Fa(@RequestParam Integer verifyCode) {
+    public String confirm2FA(@RequestParam Integer verifyCode) {
+        log.debug("confirm2FA(" + verifyCode + ")");
         User user = getUser();
-        log.debug("Entered Code is: " + verifyCode);
         if (googleAuthenticator.authorizeUser(user.getUsername(), verifyCode)) {
+            log.debug("Verify code accepted.");
             User savedUser = userRepository.findById(user.getId()).orElseThrow();
-            savedUser.setUserGoogle2Fa(true);
+            savedUser.setUseGoogle2FA(true);
             userRepository.save(savedUser);
             return "/index";
         } else {
-            // bad code
+            log.debug("Bad verifyCode.");
             return "user/register2fa";
         }
     }
@@ -65,14 +66,21 @@ public class UserController {
     public String verifyFa(@RequestParam Integer verifyCode) {
         User user = getUser();
         if (googleAuthenticator.authorizeUser(user.getUsername(), verifyCode)) {
-            user.setGoogle2FaRequired(false);
-            return  "/index";
+            log.debug("Verify code accepted.");
+            user.setGoogle2FARequired(false);
+            return "/index";
         } else {
+            log.debug("Bad verifyCode.");
             return "user/verify2fa";
         }
     }
 
     private User getUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    
+    public static final void main(String[] argv) {
+        GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+        System.out.println(googleAuthenticator.getTotpPassword("OTHMVAQ7SUQJJS3DP7FTDCTWYPVS6I64"));
     }
 }

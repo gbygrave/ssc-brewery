@@ -23,9 +23,10 @@ public class SecurityBeans {
     GoogleAuthenticator googleAuthenticator(ICredentialRepository credentialRepository) {
         GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder configBuilder = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
-        configBuilder.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(60))
-                .setWindowSize(10)
-                .setNumberOfScratchCodes(0);
+//        configBuilder
+//                .setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(60))
+//                .setWindowSize(10)
+//                .setNumberOfScratchCodes(0);
 
         GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator(configBuilder.build());
         googleAuthenticator.setCredentialRepository(credentialRepository);

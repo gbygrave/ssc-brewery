@@ -11,12 +11,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import guru.sfg.brewery.security.AbstractRestAuthFilter;
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
 import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
+import guru.sfg.brewery.security.google.Google2FaFilter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final PersistentTokenRepository persistentTokenRepository;
+    private final Google2FaFilter google2FaFilter;
     
     @SuppressWarnings("unused")
     private AbstractRestAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
@@ -61,6 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                UsernamePasswordAuthenticationFilter.class);
 //        // Don't need to re-disable csrf() protection as this setting is global.
 
+        http.addFilterBefore(google2FaFilter, SessionManagementFilter.class);
+        
         http.authorizeRequests(authorize -> {
             authorize
                     .antMatchers("/h2-console/**").permitAll() // NOT FOR PROD
